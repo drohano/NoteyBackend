@@ -10,7 +10,7 @@
 | login     | /api/1.0/user/login | POST |
 | Get logged in user information     | /api/1.0/user/decode | POST |
 | Create a note     | /api/1.0/notes/create | POST |
-| Get all notes     | /api/1.0/notes/create | POST |
+| Get all notes related to the user     | /api/1.0/notes/ | POST |
 
 
 ## Function explanation
@@ -95,13 +95,14 @@ function login(){
 
 This function creates a note and saves it in the database.
 
-You'll need three values:
+You'll need four values:
 
 * **heading** 
 * **content**
 * **date**
+* **userName**
 
-The date is ment to be tghe date of today
+The date is meant to be the date of today and the userName is the users user name
 
 
 **Example:**
@@ -181,15 +182,47 @@ function getDetails(){
 
 ```
 
+### Get all notes related to the user
 
+Gets all notes that the user has created.
+
+You'll need one variable:
+* **userName**
+
+userName is the user name of the user that is currently logged in
+
+**Example:**
+
+```
+function generateAllNotes(){
+    var userName = userName; //use the decode function to get users username
+    listData = {
+        userName: userName
+
+    };
+    $.ajax({
+        method: 'POST',
+        url: 'https://api-notey.herokuapp.com/api/1.0/notes/',
+        contentType: "application/json",
+        data: JSON.stringify(listData),
+        success: function(result){
+            // do something...
+        },
+        error: function(error) { 
+            alert(error.errorMessage); 
+        }
+    });
+}
+
+```
 
 ## Error messages
 
-| name       | Meaning           | Output           |
-| ------------- |:-------------:| ------------- | 
-| 400     | One or more fields of the registration field aren't filled | You have to fill all fields! |
-| 409     | This user name already is taken by another account in the database | User name already exists! |
-| 403     | No users match the password and username combination, the token is not valid | Username or password is not correct! - You are not logged in! |
+| name       | Meaning           |
+| ------------- |:-------------:| 
+| 400     | One or more fields of the registration field aren't filled |
+| 409     | This is an exclusive variable and is already exisiting in the database |
+| 403     | A key variable isn't provided |
 
 All error messages come in a **JSON-Object** meaning there is different parts to the message:
 
@@ -209,3 +242,6 @@ All error messages come in a **JSON-Object** meaning there is different parts to
 }
 ```
 result.errorMessage will become **You have to fill all fields**
+
+
+## Team W.E.I

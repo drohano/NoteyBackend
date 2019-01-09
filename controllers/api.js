@@ -52,12 +52,15 @@ exports.read = function(req,res){
         if (err) return next(err);
         var list = [];
         var userName = req.body.userName;
+        if (!userName){
+            return res.json({success: false, errorCode: 403, errorMessage: "No userName provided"});
+        }
         for(var i = 0; i<note.length; i++){
             if(note[i].userName == userName){
                 list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
             }
         }
-        if(list == []){
+        if((list === undefined || list.length == 0)){
             res.json({success: false, errorCode: 403, errorMessage: "No notes saved"});
         }
         else{
