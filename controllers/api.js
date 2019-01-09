@@ -26,7 +26,6 @@ exports.register = function(req,res){
     
     
 };
-
 exports.create = function(req,res){
     var create = new Note({
         userName: req.body.userName,
@@ -60,3 +59,55 @@ exports.read = function(req,res){
         
     });
 };
+exports.login = function(req,res){
+    User.findOne({
+        userName: req.body.userName
+    }, function(err, user){
+        if (err) throw err;
+
+        if(!user){
+            return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+            
+            
+        } else{
+            user.comparePassword(req.body.password, function(err, isMatch){
+                if (isMatch && !err){
+                    var createdToken = jwt.encode(user, config.secret);
+                    res.send('Bearer '+createdToken);
+                    
+                    
+                }else{
+                    return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+                }
+            })
+        }
+    });
+};
+
+getToken = function(headers){
+    if(headers && headers.authorization){
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2){
+            return parted[1];
+        } else {
+            return null;
+        }
+    }else {
+        return null;
+    }
+}
+
+exports.decode = function(req,res){
+    if(!getToken(req.headers)){
+        res.json({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
+    }
+    else{
+        var token = getToken(req.headers);
+        var decoded = jwt.decode(token, config.secret);
+        var userName = decoded.userName;
+        var email = decoded.email;
+        res.json({userName: userName, email: email});
+    }
+};
+
+require('../config/passport')(passport);

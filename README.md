@@ -4,14 +4,16 @@
 
 **Base** **API** **link:** https://api-notey.herokuapp.com/
 
-| Function       | URL           |
-| ------------- |:-------------:| 
-| Register a user     | /api/1.0/user/register |
+| Function       | URL           | Type       |
+| ------------- |:-------------:| ------------- | 
+| Register a user     | /api/1.0/user/register | POST |
+| login     | /api/1.0/user/login | POST |
+| Get logged in user information     | /api/1.0/user/decode | POST |
 
 
 ## Function explanation
 
-**Register** **a** **user** 
+### Register a user 
 
 This registers a user and hashes the password in the database. With ajax you can call this function with the
 approporiate url. 
@@ -22,32 +24,120 @@ You'll need three values:
 * **password** 
 
 **Example:**
+```
+function insertIntoDB(){
+    userData = {
+        userName: $('#userName').val(),
+        email: $('#email').val(),
+        password: $('#password').val()
 
-userName: $('#userName').val(),
+    };
+    $.ajax({
+        method: 'POST',
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/register',
+        contentType: "application/json",
+        data: JSON.stringify(userData),
+        success: function(result){
+            //do something ...
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
 
-email: $('#userEmail').val(),
+    });
+}
 
-password: $('#userPassword').val()
+```
 
-There are two errors that can occur:
+### Log in
+This function checks if the username and password combination exists in the database. 
+If it does it creates a token for you which you can then use to authenticate the user every time an action happends on the webbapp.
 
-* **409**, which means that there is a duplicate user name
-* **400**, which means that one or more fields are mepty
+You'll need two values: 
+* **userName** 
+* **password**
+
+**Example:**
+
+```
+function login(){
+    $("form").submit(function(e){
+        e.preventDefault();
+    });
+    var userName = $('#userName').val();
+    var password = $('#password').val();
+    userData = {
+        userName: userName,
+        password: password
+
+    };
+    $.ajax({
+        method: 'POST',
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/login',
+        contentType: "application/json",
+        data: JSON.stringify(userData),
+        success: function(result){
+            var token = result;
+            goToHome(token);
+        },
+        error: function(error) { 
+            alert(error.errorMessage); 
+        }
+    });
+}
+
+```
+
+### Get logged in user information
+This function will take the token in the header and extract user name and email of the user currently logged in. It's effective in the use of profile page building
+
+This requires no data to be sent but don't forget to put in the token inside the header
+
+```
+function getDetails(){
+    $.ajax({
+        method: 'GET',
+        headers: {
+            'Authorization': token, //this is a global variable, make sure to save this during login call
+        },
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/decode',
+        success: function(result){
+            // do something with the info...
+            result.userName;
+            result.email;
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
+
+    });
+}
+
+```
+
+## Error messages
+
+| name       | Meaning           | Output           |
+| ------------- |:-------------:| ------------- | 
+| 400     | One or more fields of the registration field aren't filled | You have to fill all fields! |
+| 409     | This user name already is taken by another account in the database | User name already exists! |
+| 403     | No users match the password and username combination | Username or password is not correct! |
 
 All error messages come in a **JSON-Object** meaning there is different parts to the message:
 
-| Type       | Datatype           |
-| ------------- |:-------------:| 
+| Type       | Datatype           | Meaning           |
+| ------------- |:-------------:| ------------- | 
 | success     | bool | can be true or false |
 | messageCode     | int | error code of the error |
 | errorMessage     | String | What you can use to put as a GUI error |
 
 **Example:**
 
+```
 {
     success: false,
     errorCode: 400,
     errorMessage: "You have to fill all fields!"
 }
-
+```
 result.errorMessage will become **You have to fill all fields**
