@@ -2,7 +2,7 @@
 
 ## Startup
 
-**Base API link:**https://api-notey.herokuapp.com/
+**Base** **API** **link:**https://api-notey.herokuapp.com/
 
 | Function       | URL           |
 | ------------- |:-------------:| 
