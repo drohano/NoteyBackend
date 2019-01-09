@@ -14,7 +14,19 @@
 **Register** **a** **user** 
 
 This registers a user and hashes the password in the database. With ajax you can call this function with the
-approporiate url. You'll need three values: **userName, email and password**. Store these into variables of the same name.
+approporiate url. 
+
+You'll need three values: 
+* **userName** 
+* **email**
+* **password** 
+
+**Example**
+userName: $('#userName').val(),
+
+email: $('#userEmail').val(),
+
+password: $('#userPassword').val()
 
 There are two errors that can occur:
 
