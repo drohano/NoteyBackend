@@ -83,4 +83,17 @@ getToken = function(headers){
     }
 }
 
+exports.decode = function(req,res){
+    if(!getToken(req.headers)){
+        res.json({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
+    }
+    else{
+        var token = getToken(req.headers);
+        var decoded = jwt.decode(token, config.secret);
+        var userName = decoded.userName;
+        var email = decoded.email;
+        res.json({userName: userName, email: email});
+    }
+};
+
 require('../config/passport')(passport);
