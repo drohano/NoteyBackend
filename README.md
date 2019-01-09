@@ -4,10 +4,11 @@
 
 **Base** **API** **link:** https://api-notey.herokuapp.com/
 
-| Function       | URL           |
+| Function       | URL           | Type           |
 | ------------- |:-------------:| 
-| Register a user     | /api/1.0/user/register |
-| login     | /api/1.0/user/login |
+| Register a user     | /api/1.0/user/register | POST |
+| login     | /api/1.0/user/login | POST |
+| Get logged in user information     | /api/1.0/user/decode | POST |
 
 
 ## Function explanation
@@ -87,6 +88,33 @@ function login(){
 
 ```
 
+### Get logged in user information
+This function will take the token in the header and extract user name and email of the user currently logged in. It's effective in the use of profile page building
+
+This requires no data to be sent but don't forget to put in the token inside the header
+
+```
+function getDetails(){
+    $.ajax({
+        method: 'GET',
+        headers: {
+            'Authorization': token, //this is a global variable, make sure to save this during login call
+        },
+        url: 'api/1.0/user/decode',
+        success: function(result){
+            // do something with the info...
+            result.userName;
+            result.email;
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
+
+    });
+}
+
+```
+
 ## Error messages
 
 | name       | Meaning           | Output           |
@@ -105,10 +133,11 @@ All error messages come in a **JSON-Object** meaning there is different parts to
 
 **Example:**
 
+```
 {
     success: false,
     errorCode: 400,
     errorMessage: "You have to fill all fields!"
 }
-
+```
 result.errorMessage will become **You have to fill all fields**
