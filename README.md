@@ -4,7 +4,7 @@
 
 **Base** **API** **link:** https://api-notey.herokuapp.com/
 
-| Function       | URL           | Type           |
+| Function       | URL           | Type       |
 | ------------- |:-------------:| 
 | Register a user     | /api/1.0/user/register | POST |
 | login     | /api/1.0/user/login | POST |
