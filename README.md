@@ -12,7 +12,7 @@
 
 ## Function explanation
 
-###Register a user 
+### Register a user 
 
 This registers a user and hashes the password in the database. With ajax you can call this function with the
 approporiate url. 
@@ -32,7 +32,7 @@ password: $('#userPassword').val()
 
 ```
 
-###Log in
+### Log in
 This function checks if the username and password combination exists in the database. 
 If it does it creates a token for you which you can then use to authenticate the user every time an action happends on the webbapp.
 You'll need two values: 
@@ -72,7 +72,7 @@ function login(){
 
 ```
 
-##Error messages
+## Error messages
 
 | name       | Meaning           | Output           |
 | ------------- |:-------------:| ------------- | 
