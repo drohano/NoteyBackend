@@ -1,12 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var d = new Date();
-var n = d.toString()
-
 var NoteSchema = new Schema({
-    heading: {type: String, required: true, max: 100, unique: true},
+    userName: {type: String, required: true, max: 100},
+    heading: {type: String, required: true, max: 100},
     content: {type: String, required: true, max: 1000},
+    date: {type: String, required: true, max: 100}
     
 });
 
