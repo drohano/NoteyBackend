@@ -35,6 +35,7 @@ password: $('#userPassword').val()
 ### Log in
 This function checks if the username and password combination exists in the database. 
 If it does it creates a token for you which you can then use to authenticate the user every time an action happends on the webbapp.
+
 You'll need two values: 
 * **userName** 
 * **password**
