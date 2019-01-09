@@ -51,10 +51,19 @@ exports.read = function(req,res){
     Note.find(function(err, note){
         if (err) return next(err);
         var list = [];
+        var userName = req.body.userName;
         for(var i = 0; i<note.length; i++){
-            list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
+            if(note[i].userName == userName){
+                list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
+            }
         }
-        res.send(list);
+        if(list == []){
+            res.json({success: false, errorCode: 403, errorMessage: "No notes saved"});
+        }
+        else{
+            res.send(list);
+        }
+        
         
         
     });
