@@ -21,7 +21,8 @@ You'll need three values:
 * **email**
 * **password** 
 
-**Example**
+**Example:**
+
 userName: $('#userName').val(),
 
 email: $('#userEmail').val(),
