@@ -24,11 +24,27 @@ You'll need three values:
 
 **Example:**
 ```
-userName: $('#userName').val(),
+function insertIntoDB(){
+    userData = {
+        userName: $('#userName').val(),
+        email: $('#email').val(),
+        password: $('#password').val()
 
-email: $('#userEmail').val(),
+    };
+    $.ajax({
+        method: 'POST',
+        url: 'register/register',
+        contentType: "application/json",
+        data: JSON.stringify(userData),
+        success: function(result){
+            //do something ...
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
 
-password: $('#userPassword').val()
+    });
+}
 
 ```
 
@@ -61,12 +77,10 @@ function login(){
         data: JSON.stringify(userData),
         success: function(result){
             var token = result;
-            else{
-                goToHome(token);
-            }
+            goToHome(token);
         },
         error: function(error) { 
-            alert(error.erromessage); 
+            alert(error.errorMessage); 
         }
     });
 }
