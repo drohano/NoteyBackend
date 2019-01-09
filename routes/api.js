@@ -4,4 +4,6 @@ var controller = require('../controllers/api');
 
 router.post('/user/register', controller.register);
 
+router.post('/notes/create', controller.create);
+
 module.exports = router;
