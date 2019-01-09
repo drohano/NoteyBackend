@@ -5,7 +5,7 @@
 **Base** **API** **link:** https://api-notey.herokuapp.com/
 
 | Function       | URL           | Type       |
-| ------------- |:-------------:| 
+| ------------- |:-------------:| ------------- | 
 | Register a user     | /api/1.0/user/register | POST |
 | login     | /api/1.0/user/login | POST |
 | Get logged in user information     | /api/1.0/user/decode | POST |
@@ -34,7 +34,7 @@ function insertIntoDB(){
     };
     $.ajax({
         method: 'POST',
-        url: 'register/register',
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/register',
         contentType: "application/json",
         data: JSON.stringify(userData),
         success: function(result){
@@ -73,7 +73,7 @@ function login(){
     };
     $.ajax({
         method: 'POST',
-        url: 'api/1.0/user/login',
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/login',
         contentType: "application/json",
         data: JSON.stringify(userData),
         success: function(result){
@@ -100,7 +100,7 @@ function getDetails(){
         headers: {
             'Authorization': token, //this is a global variable, make sure to save this during login call
         },
-        url: 'api/1.0/user/decode',
+        url: 'https://api-notey.herokuapp.com/api/1.0/user/decode',
         success: function(result){
             // do something with the info...
             result.userName;
