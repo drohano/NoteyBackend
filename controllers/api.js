@@ -44,3 +44,43 @@ exports.register = function(req,res){
     
     
 };
+
+exports.login = function(req,res){
+    User.findOne({
+        userName: req.body.userName
+    }, function(err, user){
+        if (err) throw err;
+
+        if(!user){
+            return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+            
+            
+        } else{
+            user.comparePassword(req.body.password, function(err, isMatch){
+                if (isMatch && !err){
+                    var createdToken = jwt.encode(user, config.secret);
+                    res.send('Bearer '+createdToken);
+                    
+                    
+                }else{
+                    return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+                }
+            })
+        }
+    });
+};
+
+getToken = function(headers){
+    if(headers && headers.authorization){
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2){
+            return parted[1];
+        } else {
+            return null;
+        }
+    }else {
+        return null;
+    }
+}
+
+require('../config/passport')(passport);
