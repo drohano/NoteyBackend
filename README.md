@@ -54,6 +54,10 @@ function insertIntoDB(){
 
 ```
 
+**Note:**
+
+No use of special characters are allowed on user name or domain name. The API will reject this and send an error message
+
 ### Log in
 
 This function checks if the username and password combination exists in the database. 
