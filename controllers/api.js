@@ -98,12 +98,23 @@ exports.update = function(req,res){
                 return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
             }
             else{
-            res.send(note); 
+                res.send(''); 
             }
         
         });
     }
      
+}
+
+exports.delete = function(req,res){
+    Note.findByIdAndRemove(req.params.id, function(error, note){
+        if(error){
+            return res.json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+        }
+        else{
+            res.send('');
+        }
+    });
 }
 
 exports.login = function(req,res){

@@ -10,9 +10,10 @@
 | login     | /api/1.0/user/login | POST |
 | Get logged in user information     | /api/1.0/user/decode | POST |
 | Create a note     | /api/1.0/notes/create | POST |
-| Get all notes related to the user     | /api/1.0/notes/ | POST |
+| Get all notes related to the user     | /api/1.0/notes/ | GET |
 | Get specific note     | /api/1.0/notes/{id} | GET |
 | Update note     | /api/1.0/notes/update/{id} | PATCH |
+| Delete note     | /api/1.0/notes/delete/{id} | DELETE |
 
 
 ## Function explanation
@@ -123,10 +124,6 @@ function createNote(){
     var dd = date.getDate();
     var mm = date.getMonth()+1; //January is 0!
     var yyyy = date.getFullYear();
-<<<<<<< HEAD
-=======
-    var id= id; 
->>>>>>> a8534520b74a586c8b5b73b7b6474c9a959391d3
 
     if(dd<10) {
         dd = '0'+dd
@@ -200,6 +197,31 @@ function getDetails(){
         method: 'PATCH',
         url: 'https://api-notey.herokuapp.com/api/1.0/notes/update/{id}',
         data: JSON.stringify(noteData),
+        success: function(result){
+            // do something...
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
+
+    });
+}
+
+```
+
+### Delete note
+
+This function updates information in the note
+
+This requires the notes **id** in the url
+
+**Example:**
+
+```
+function deleteNote(){
+    $.ajax({
+        method: 'DELETE',
+        url: 'https://api-notey.herokuapp.com/api/1.0/notes/delete/{id}',
         success: function(result){
             // do something...
         },
