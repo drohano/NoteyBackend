@@ -92,6 +92,9 @@ function login(){
 
 ```
 
+**What you'll recieve:**
+* **token**
+
 ### Create a note
 
 This function creates a note and saves it in the database.
@@ -154,8 +157,6 @@ function createNote(){
 ```
 
 
-
-
 ### Get logged in user information
 This function will take the token in the header and extract user name, email and id of the user currently logged in. It's effective in the use of profile page building
 
@@ -184,14 +185,19 @@ function getDetails(){
 
 ```
 
+**What you'll recieve in JSON:**
+* **userName**
+* **_id**
+* **email**
+
 ### Get all notes related to the user
 
 Gets all notes that the user has created.
 
 You'll need one variable:
-* **userName**
+* **id**
 
-userName is the user name of the user that is currently logged in
+**id** is the user id of the user that is currently logged in
 
 **Example:**
 
@@ -218,6 +224,11 @@ function generateAllNotes(){
 
 ```
 
+**What you'll recieve in JSON:**
+* **heading**
+* **date**
+* **_id**
+
 ### Get specific note
 
 Gets a note and shows it's content.
@@ -242,6 +253,11 @@ function generateNote(){
 }
 
 ```
+**What you'll recieve in JSON:**
+* **heading**
+* **content**
+* **date**
+* **_id**
 
 ## Error messages
 
