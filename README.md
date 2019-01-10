@@ -101,11 +101,13 @@ function login(){
 
 This function creates a note and saves it in the database.
 
-You'll need four values:
+You'll need three values:
 
 * **heading** 
 * **content**
 * **date**
+
+And additionally you'll need to put user **token** into header
 
 The **date** is meant to be the date of today.
 
@@ -142,6 +144,9 @@ function createNote(){
     $.ajax({
         method: 'POST',
         url: 'https://api-notey.herokuapp.com/api/1.0/notes/create',
+        headers: {
+            'Authorization': token, //this is a global variable, make sure to save this during login call
+        },
         contentType: "application/json",
         data: JSON.stringify(noteData),
         success: function(result){
@@ -234,7 +239,7 @@ function deleteNote(){
 ```
 
 ### Get logged in user information
-This function will take the token in the header and extract user name, email and id of the user currently logged in. It's effective in the use of profile page building
+This function will take the token in the header and extract user name and email of the user currently logged in. It's effective in the use of profile page building
 
 This requires no data to be sent but don't forget to put in the token inside the header
 
@@ -252,7 +257,6 @@ function getDetails(){
             // do something with the info...
             result.userName;
             result.email;
-            result.id;
         },
         error: function(error){
             alert(error.errorMessage);
@@ -265,7 +269,6 @@ function getDetails(){
 
 **What you'll recieve in JSON:**
 * **userName**
-* **_id**
 * **email**
 
 ### Get all notes related to the user
