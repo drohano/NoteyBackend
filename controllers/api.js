@@ -164,10 +164,9 @@ exports.decode = function(req,res){
     else{
         var token = getToken(req.headers);
         var decoded = jwt.decode(token, config.secret);
-        var id = decoded._id;
         var userName = decoded.userName;
         var email = decoded.email;
-        res.json({id: id, userName: userName, email: email});
+        res.json({userName: userName, email: email});
     }
 };
 
