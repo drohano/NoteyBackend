@@ -123,6 +123,10 @@ function createNote(){
     var dd = date.getDate();
     var mm = date.getMonth()+1; //January is 0!
     var yyyy = date.getFullYear();
+<<<<<<< HEAD
+=======
+    var id= id; 
+>>>>>>> a8534520b74a586c8b5b73b7b6474c9a959391d3
 
     if(dd<10) {
         dd = '0'+dd
