@@ -28,7 +28,7 @@ exports.register = function(req,res){
 };
 exports.create = function(req,res){
     var create = new Note({
-        userName: req.body.userName,
+        id: req.body.id,
         heading: req.body.heading,
         content: req.body.content,
         date: req.body.date
@@ -51,12 +51,12 @@ exports.read = function(req,res){
     Note.find(function(err, note){
         if (err) return next(err);
         var list = [];
-        var userName = req.body.userName;
-        if (!userName){
-            return res.json({success: false, errorCode: 403, errorMessage: "No userName provided"});
+        var id = req.body.id;
+        if (!id){
+            return res.json({success: false, errorCode: 403, errorMessage: "No user id provided"});
         }
         for(var i = 0; i<note.length; i++){
-            if(note[i].userName == userName){
+            if(note[i].id == id){
                 list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
             }
         }
@@ -116,9 +116,10 @@ exports.decode = function(req,res){
     else{
         var token = getToken(req.headers);
         var decoded = jwt.decode(token, config.secret);
+        var id = decoded._id;
         var userName = decoded.userName;
         var email = decoded.email;
-        res.json({userName: userName, email: email});
+        res.json({id: id, userName: userName, email: email});
     }
 };
 

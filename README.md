@@ -100,7 +100,7 @@ You'll need four values:
 * **heading** 
 * **content**
 * **date**
-* **userName**
+* **id**
 
 The date is meant to be the date of today and the userName is the users user name
 
@@ -133,7 +133,7 @@ function createNote(){
         heading: heading,
         content: content,
         date: date,
-        userName: userName
+        id: id
 
     };
     $.ajax({
@@ -156,7 +156,7 @@ function createNote(){
 
 
 ### Get logged in user information
-This function will take the token in the header and extract user name and email of the user currently logged in. It's effective in the use of profile page building
+This function will take the token in the header and extract user name, email and id of the user currently logged in. It's effective in the use of profile page building
 
 This requires no data to be sent but don't forget to put in the token inside the header
 
@@ -172,6 +172,7 @@ function getDetails(){
             // do something with the info...
             result.userName;
             result.email;
+            result.id;
         },
         error: function(error){
             alert(error.errorMessage);
