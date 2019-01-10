@@ -5,11 +5,22 @@ var jwt = require('jwt-simple');
 var config = require('../config/database');
 
 exports.register = function(req,res){
+    var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
+    
     var register = new User({
         userName: req.body.userName,
         email: req.body.email,
         password: req.body.password
     });
+    var fields = register.email.split('@');
+    if (format.test(register.userName)){
+        return res.json({success: false, errorCode: 403, errorMessage: "Special characters are not allowed"});
+    }
+    else if(formatEmail.test(fields[1])){
+        return res.json({success: false, errorCode: 403, errorMessage: "Domain name is invalid"});
+    }
+    else{
         register.save(function(error){
         //obs hantera error
             if (error){
@@ -17,12 +28,14 @@ exports.register = function(req,res){
                     return res.json({success: false, errorCode: 409, errorMessage: "User name already exists!"});
                 }
                 else{
-                   return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
                 }
                 
             }
             res.send('');
-        });
+        });  
+    }
+        
     
     
 };
