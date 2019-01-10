@@ -27,8 +27,10 @@ exports.register = function(req,res){
     
 };
 exports.create = function(req,res){
+    var token = getToken(req.headers);
+    var decoded = jwt.decode(token, config.secret);
     var create = new Note({
-        id: req.body.id,
+        id: decoded._id,
         heading: req.body.heading,
         content: req.body.content,
         date: req.body.date
