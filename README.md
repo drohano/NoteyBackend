@@ -108,7 +108,7 @@ The date is meant to be the date of today and the userName is the users user nam
 **Example:**
 
 ```
-function login(){
+function createNote(){
     $("form").submit(function(e){
         e.preventDefault();
     });
