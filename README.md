@@ -106,9 +106,8 @@ You'll need four values:
 * **heading** 
 * **content**
 * **date**
-* **id**
 
-The date is meant to be the date of today and the userName is the users user name
+The **date** is meant to be the date of today.
 
 
 **Example:**
