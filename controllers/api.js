@@ -48,10 +48,13 @@ exports.create = function(req,res){
 
 
 exports.read = function(req,res){
+    var token = getToken(req.headers);
+    var decoded = jwt.decode(token, config.secret);
     Note.find(function(err, note){
         if (err) return next(err);
         var list = [];
-        var id = req.body.id;
+
+        var id = decoded._id;
         if (!id){
             return res.json({success: false, errorCode: 403, errorMessage: "No user id provided!"});
         }
@@ -83,6 +86,26 @@ exports.note = function(req,res){
         
     });
 }
+
+
+exports.update = function(req,res){
+    if(req.body.heading == null || req.body.content == null || req.body.date == null){
+        return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"});
+    }
+    else{
+        Note.findByIdAndUpdate(req.params.id, {heading: req.body.heading, content: req.body.content, date: req.body.date}, {new: true}, (error, note) =>{
+            if (error){
+                return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+            }
+            else{
+            res.send(note); 
+            }
+        
+        });
+    }
+     
+}
+
 exports.login = function(req,res){
     User.findOne({
         userName: req.body.userName

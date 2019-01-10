@@ -12,6 +12,7 @@
 | Create a note     | /api/1.0/notes/create | POST |
 | Get all notes related to the user     | /api/1.0/notes/ | POST |
 | Get specific note     | /api/1.0/notes/{id} | GET |
+| Update note     | /api/1.0/notes/update/{id} | PATCH |
 
 
 ## Function explanation
@@ -122,7 +123,6 @@ function createNote(){
     var dd = date.getDate();
     var mm = date.getMonth()+1; //January is 0!
     var yyyy = date.getFullYear();
-    var userName = userName; //use the decode function to get users username
 
     if(dd<10) {
         dd = '0'+dd
@@ -136,8 +136,7 @@ function createNote(){
     noteData = {
         heading: heading,
         content: content,
-        date: date,
-        id: id
+        date: date
 
     };
     $.ajax({
@@ -156,11 +155,65 @@ function createNote(){
 
 ```
 
+### Update note
+
+This function updates information in the note
+
+This requires three variables:
+* **heading**
+* **content**
+* **date**
+
+And aditionally the notes **id** in the url
+
+**Example:**
+
+```
+function getDetails(){
+    var heading = $('#heading').val();
+    var content = $('#content').val();
+    var date = new Date();
+    var dd = date.getDate();
+    var mm = date.getMonth()+1; //January is 0!
+    var yyyy = date.getFullYear();
+
+    if(dd<10) {
+        dd = '0'+dd
+    } 
+
+    if(mm<10) {
+        mm = '0'+mm
+    } 
+
+    date = mm + '/' + dd + '/' + yyyy;
+    noteData = {
+        heading: heading,
+        content: content,
+        date: date
+
+    };
+    $.ajax({
+        method: 'PATCH',
+        url: 'https://api-notey.herokuapp.com/api/1.0/notes/update/{id}',
+        data: JSON.stringify(noteData),
+        success: function(result){
+            // do something...
+        },
+        error: function(error){
+            alert(error.errorMessage);
+        }
+
+    });
+}
+
+```
 
 ### Get logged in user information
 This function will take the token in the header and extract user name, email and id of the user currently logged in. It's effective in the use of profile page building
 
 This requires no data to be sent but don't forget to put in the token inside the header
+
+**Example:**
 
 ```
 function getDetails(){
@@ -194,25 +247,22 @@ function getDetails(){
 
 Gets all notes that the user has created.
 
-You'll need one variable:
-* **id**
+You'll need one variable in header:
+* **token**
 
-**id** is the user id of the user that is currently logged in
+**token** is the user token generated of the user that is currently logged in
 
 **Example:**
 
 ```
 function generateAllNotes(){
-    var userName = userName; //use the decode function to get users username
-    listData = {
-        userName: userName
-
-    };
     $.ajax({
-        method: 'POST',
+        method: 'GET',
         url: 'https://api-notey.herokuapp.com/api/1.0/notes/',
         contentType: "application/json",
-        data: JSON.stringify(listData),
+        headers: {
+            'Authorization': token, //this is a global variable, make sure to save this during login call
+        },
         success: function(result){
             // do something...
         },
