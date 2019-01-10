@@ -122,7 +122,7 @@ function createNote(){
     var dd = date.getDate();
     var mm = date.getMonth()+1; //January is 0!
     var yyyy = date.getFullYear();
-    var userName = userName; //use the decode function to get users username
+    var id= id; 
 
     if(dd<10) {
         dd = '0'+dd
