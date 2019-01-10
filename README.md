@@ -11,6 +11,7 @@
 | Get logged in user information     | /api/1.0/user/decode | POST |
 | Create a note     | /api/1.0/notes/create | POST |
 | Get all notes related to the user     | /api/1.0/notes/ | POST |
+| Get specific note     | /api/1.0/notes/{id} | GET |
 
 
 ## Function explanation
@@ -206,6 +207,31 @@ function generateAllNotes(){
         url: 'https://api-notey.herokuapp.com/api/1.0/notes/',
         contentType: "application/json",
         data: JSON.stringify(listData),
+        success: function(result){
+            // do something...
+        },
+        error: function(error) { 
+            alert(error.errorMessage); 
+        }
+    });
+}
+
+```
+
+### Get specific note
+
+Gets a note and shows it's content.
+
+You'll need to send the variable **id** in the url. **Id** variable is the id of the note which you can recieve by getting all **notes**.
+
+**Example:**
+
+```
+function generateNote(){
+    $.ajax({
+        method: 'GET',
+        url: 'https://api-notey.herokuapp.com/api/1.0/notes/3123251431',
+        contentType: "application/json",
         success: function(result){
             // do something...
         },

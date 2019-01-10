@@ -53,7 +53,7 @@ exports.read = function(req,res){
         var list = [];
         var id = req.body.id;
         if (!id){
-            return res.json({success: false, errorCode: 403, errorMessage: "No user id provided"});
+            return res.json({success: false, errorCode: 403, errorMessage: "No user id provided!"});
         }
         for(var i = 0; i<note.length; i++){
             if(note[i].id == id){
@@ -61,7 +61,7 @@ exports.read = function(req,res){
             }
         }
         if((list === undefined || list.length == 0)){
-            res.json({success: false, errorCode: 403, errorMessage: "No notes saved"});
+            res.json({success: false, errorCode: 403, errorMessage: "No notes saved!"});
         }
         else{
             res.send(list);
@@ -71,6 +71,18 @@ exports.read = function(req,res){
         
     });
 };
+
+exports.note = function(req,res){
+    Note.findById(req.params.id, function(error, note){
+        if(error){
+            return res.json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+        }
+        else{
+           res.json({id: note._id, heading: note.heading, content: note.content, date: note.date}); 
+        }
+        
+    });
+}
 exports.login = function(req,res){
     User.findOne({
         userName: req.body.userName
