@@ -15,20 +15,20 @@ exports.register = function(req,res){
     });
     var fields = register.email.split('@');
     if (format.test(register.userName)){
-        return res.status(403).send({success: false, errorCode: 403, errorMessage: "Special characters are not allowed"});
+        return res.json({success: false, errorCode: 403, errorMessage: "Special characters are not allowed"});
     }
     else if(formatEmail.test(fields[1])){
-        return res.status(403).send({success: false, errorCode: 403, errorMessage: "Domain name is invalid"});
+        return res.json({success: false, errorCode: 403, errorMessage: "Domain name is invalid"});
     }
     else{
         register.save(function(error){
         //obs hantera error
             if (error){
                 if(error.code == 11000){
-                    return res.status(409).send({success: false, errorCode: 409, errorMessage: "User name already exists!"});
+                    return res.json({success: false, errorCode: 409, errorMessage: "User name already exists!"});
                 }
                 else{
-                return res.status(400).send({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
                 }
                 
             }
@@ -54,7 +54,7 @@ exports.create = function(req,res){
         //obs hantera error
             if (error){
                 console.log(error);
-                return res.status(400).send({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
                 
             }
             res.send('');
@@ -71,7 +71,7 @@ exports.read = function(req,res){
 
         var id = decoded._id;
         if (!id){
-            return res.status(403).send({success: false, errorCode: 403, errorMessage: "No user id provided!"});
+            return res.json({success: false, errorCode: 403, errorMessage: "No user id provided!"});
         }
         for(var i = 0; i<note.length; i++){
             if(note[i].id == id){
@@ -79,7 +79,7 @@ exports.read = function(req,res){
             }
         }
         if((list === undefined || list.length == 0)){
-            res.status(403).send({success: false, errorCode: 403, errorMessage: "No notes saved!"});
+            res.json({success: false, errorCode: 403, errorMessage: "No notes saved!"});
         }
         else{
             res.send(list);
@@ -93,7 +93,7 @@ exports.read = function(req,res){
 exports.note = function(req,res){
     Note.findById(req.params.id, function(error, note){
         if(error){
-            return res.status(403).send({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+            return res.json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
         }
         else{
            res.json({id: note._id, heading: note.heading, content: note.content, date: note.date}); 
@@ -105,12 +105,12 @@ exports.note = function(req,res){
 
 exports.update = function(req,res){
     if(req.body.heading == null || req.body.content == null || req.body.date == null){
-        return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"});
+        return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"});
     }
     else{
         Note.findByIdAndUpdate(req.params.id, {heading: req.body.heading, content: req.body.content, date: req.body.date}, {new: true}, (error, note) =>{
             if (error){
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
             }
             else{
                 res.send(''); 
@@ -124,7 +124,7 @@ exports.update = function(req,res){
 exports.delete = function(req,res){
     Note.findByIdAndRemove(req.params.id, function(error, note){
         if(error){
-            return res.status(403).send({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+            return res.json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
         }
         else{
             res.send('');
@@ -139,7 +139,7 @@ exports.login = function(req,res){
         if (err) throw err;
 
         if(!user){
-            return res.status(404).send({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+            return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
             
             
         } else{
@@ -150,7 +150,7 @@ exports.login = function(req,res){
                     
                     
                 }else{
-                    return res.status(404).send({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+                    return res.json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
                 }
             })
         }
@@ -172,7 +172,7 @@ getToken = function(headers){
 
 exports.decode = function(req,res){
     if(!getToken(req.headers)){
-        res.status(404).send({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
+        res.json({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
     }
     else{
         var token = getToken(req.headers);
