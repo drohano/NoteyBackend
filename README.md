@@ -46,7 +46,8 @@ function insertIntoDB(){
             //do something ...
         },
         error: function(error){
-            alert(error.errorMessage);
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
 
     });
@@ -90,8 +91,9 @@ function login(){
             var token = result;
             goToHome(token);
         },
-        error: function(error) { 
-            alert(error.errorMessage); 
+        error: function(error){
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
     });
 }
@@ -156,8 +158,9 @@ function createNote(){
         success: function(result){
             // do something...
         },
-        error: function(error) { 
-            alert(error.errorMessage); 
+        error: function(error){
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
     });
 }
@@ -209,7 +212,8 @@ function getDetails(){
             // do something...
         },
         error: function(error){
-            alert(error.errorMessage);
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
 
     });
@@ -234,7 +238,8 @@ function deleteNote(){
             // do something...
         },
         error: function(error){
-            alert(error.errorMessage);
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
 
     });
@@ -263,7 +268,8 @@ function getDetails(){
             result.email;
         },
         error: function(error){
-            alert(error.errorMessage);
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
 
     });
@@ -298,8 +304,9 @@ function generateAllNotes(){
         success: function(result){
             // do something...
         },
-        error: function(error) { 
-            alert(error.errorMessage); 
+        error: function(error){
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
     });
 }
@@ -328,8 +335,9 @@ function generateNote(){
         success: function(result){
             // do something...
         },
-        error: function(error) { 
-            alert(error.errorMessage); 
+        error: function(error){
+            var err = JSON.parse(error.responseText);
+            alert(err.errorMessage);
         }
     });
 }
@@ -366,7 +374,15 @@ All error messages come in a **JSON-Object** meaning there is different parts to
     errorMessage: "You have to fill all fields!"
 }
 ```
-result.errorMessage will become **You have to fill all fields**
+
+These error messages have to be parsed with the responseText as so:
+```
+{
+    var err = JSON.parse(error.responseText);
+}
+```
+
+err.errorMessage will become **You have to fill all fields**
 
 
 ## Team W.E.I
