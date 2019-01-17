@@ -84,7 +84,7 @@ exports.read = function (req, res) {
         var id = decoded._id;
         if (!id) {
             return res.status(403).json({
-                errorCode: 403,
+                errorCode: 3.0,
                 errorMessage: "[read] token not found"
             });
         }
@@ -99,7 +99,7 @@ exports.read = function (req, res) {
         // If there is no Notey's it will spit this out.
         if ((list === undefined || list.length == 0)) {
             res.status(403).json({
-                errorCode: 403,
+                errorCode: 3.1,
                 errorMessage: "[read] notey notes count is 0/undefined"
             });
         }
@@ -114,7 +114,7 @@ exports.note = function (req, res) {
     Note.findById(req.params.id, function (error, note) {
         if (error) {
             return res.status(403).json({
-                errorCode: 403,
+                errorCode: 4.0,
                 errorMessage: "[note] noteId could not be found"
             });
         }
@@ -129,7 +129,7 @@ exports.update = function (req, res) {
     // If heading or content doesnt exist it will spitt this out. 
     if (req.body.heading == null || req.body.content == null || req.body.date == null) {
         return res.status(400).json({
-            errorCode: 400,
+            errorCode: 2.0,
             errorMessage: "[update] not filled all required fields"
         });
     }
@@ -138,7 +138,7 @@ exports.update = function (req, res) {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
-                    errorCode: 400,
+                    errorCode: 5.0,
                     errorMessage: "[update] note content failed to update"
                 });
             }
@@ -154,7 +154,7 @@ exports.delete = function (req, res) {
         if (error) {
             // If it cant find the noteyID. 
             return res.status(403).json({
-                errorCode: 403,
+                errorCode: 4.0,
                 errorMessage: "[delete] noteId could not be found"
             });
         }
@@ -173,7 +173,7 @@ exports.login = function (req, res) {
         if (!user) {
             // If the username doesn't exist
             return res.status(404).json({
-                errorCode: 404,
+                errorCode: 6.0,
                 errorMessage: "[login] login userName does not exist"
             });
         } else {
@@ -184,7 +184,7 @@ exports.login = function (req, res) {
                 } else {
                     // If the username and password doesn't match. 
                     return res.status(404).json({
-                        errorCode: 404,
+                        errorCode: 6.1,
                         errorMessage: "[login] login userName and password mismatch"
                     });
                 }
@@ -211,7 +211,7 @@ exports.decode = function (req, res) {
         // This one is for a possibly profile view.
         // If you're not logged in it will spit this out. 
         res.status(404).json({
-            errorCode: 404,
+            errorCode: 7.0,
             errorMessage: "[decode] user is not logged in"
         });
     }
