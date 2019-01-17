@@ -4,42 +4,51 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
 
-exports.register = function(req,res){
+exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
-    
+
     var register = new User({
         userName: req.body.userName,
         email: req.body.email,
         password: req.body.password
     });
     var fields = register.email.split('@');
-    if (format.test(register.userName)){
-        return res.status(403).json({success: false, errorCode: 403, errorMessage: "Special characters are not allowed"});
+    if (format.test(register.userName)) {
+        return res.status(403).json({
+            errorCode: 1.0,
+            errorMessage: "[register] register.userName format is mismatched"
+        });
     }
-    else if(formatEmail.test(fields[1])){
-        return res.status(403).json({success: false, errorCode: 403, errorMessage: "Domain name is invalid"});
+    else if (formatEmail.test(fields[1])) {
+        return res.status(403).json({
+            errorCode: 1.1,
+            errorMessage: "[register] register domain format is mismatched"
+        });
     }
-    else{
-        register.save(function(error){
-        //obs hantera error
-            if (error){
-                if(error.code == 11000){
-                    return res.status(409).json({success: false, errorCode: 409, errorMessage: "User name already exists!"});
+    else {
+        register.save(function (error) {
+            //obs hantera error
+            if (error) {
+                if (error.code == 11000) {
+                    return res.status(409).json({
+                        errorCode: 1.3,
+                        errorMessage: "[register] userName already exist in database"
+                    });
                 }
-                else{
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                else {
+                    return res.status(400).json({
+                        errorCode: 1.4,
+                        errorMessage: "[register] not filled all required fields"
+                    });
                 }
-                
             }
             res.send('');
-        });  
+        });
     }
-        
-    
-    
 };
-exports.create = function(req,res){
+
+exports.create = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
@@ -47,139 +56,171 @@ exports.create = function(req,res){
         heading: req.body.heading,
         content: req.body.content,
         date: req.body.date
-        
-
     });
-    create.save(function(error){
-        //obs hantera error
-            if (error){
-                console.log(error);
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
-                
-            }
-            res.send('');
-        });
+
+    // This one is for create Notey function.
+    // If heading or content doesnt exist it will spitt this out.
+    // Both need to have a value.
+    create.save(function (error) {
+        if (error) {
+            console.log(error);
+            return res.status(400).json({
+                errorCode: 2.0,
+                errorMessage: "[create] not filled heading or/and content"
+            });
+        }
+        res.send('');
+    });
 }
 
-
-exports.read = function(req,res){
+exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
-    Note.find(function(err, note){
+    Note.find(function (err, note) {
         if (err) return next(err);
         var list = [];
 
+        // This one is for reading Tokens.
         var id = decoded._id;
-        if (!id){
-            return res.status(403).json({success: false, errorCode: 403, errorMessage: "No user id provided!"});
+        if (!id) {
+            return res.status(403).json({
+                errorCode: 403,
+                errorMessage: "[read] token not found"
+            });
         }
-        for(var i = 0; i<note.length; i++){
-            if(note[i].id == id){
-                list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
+
+        for (var i = 0; i < note.length; i++) {
+            if (note[i].id == id) {
+                list.push({ id: note[i]._id, heading: note[i].heading, date: note[i].date });
             }
         }
-        if((list === undefined || list.length == 0)){
-            res.status(403).json({success: false, errorCode: 403, errorMessage: "No notes saved!"});
+
+        // This one is for list notey's function.
+        // If there is no Notey's it will spit this out.
+        if ((list === undefined || list.length == 0)) {
+            res.status(403).json({
+                errorCode: 403,
+                errorMessage: "[read] notey notes count is 0/undefined"
+            });
         }
-        else{
+        else {
             res.send(list);
         }
-        
-        
-        
     });
 };
 
-exports.note = function(req,res){
-    Note.findById(req.params.id, function(error, note){
-        if(error){
-            return res.status(403).json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+// If it cant find the noteyID.  
+exports.note = function (req, res) {
+    Note.findById(req.params.id, function (error, note) {
+        if (error) {
+            return res.status(403).json({
+                errorCode: 403,
+                errorMessage: "[note] noteId could not be found"
+            });
         }
-        else{
-           res.json({id: note._id, heading: note.heading, content: note.content, date: note.date}); 
+        else {
+            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date });
         }
-        
     });
 }
 
-
-exports.update = function(req,res){
-    if(req.body.heading == null || req.body.content == null || req.body.date == null){
-        return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"});
-    }
-    else{
-        Note.findByIdAndUpdate(req.params.id, {heading: req.body.heading, content: req.body.content, date: req.body.date}, {new: true}, (error, note) =>{
-            if (error){
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
-            }
-            else{
-                res.send(''); 
-            }
-        
+exports.update = function (req, res) {
+    // This one is for updateSave.
+    // If heading or content doesnt exist it will spitt this out. 
+    if (req.body.heading == null || req.body.content == null || req.body.date == null) {
+        return res.status(400).json({
+            errorCode: 400,
+            errorMessage: "[update] not filled all required fields"
         });
     }
-     
+    else {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date }, { new: true }, (error, note) => {
+            // If it couldn't update it will spit this out.
+            if (error) {
+                return res.status(400).json({
+                    errorCode: 400,
+                    errorMessage: "[update] note content failed to update"
+                });
+            }
+            else {
+                res.send('');
+            }
+        });
+    }
 }
 
-exports.delete = function(req,res){
-    Note.findByIdAndRemove(req.params.id, function(error, note){
-        if(error){
-            return res.status(403).json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
+exports.delete = function (req, res) {
+    Note.findByIdAndRemove(req.params.id, function (error, note) {
+        if (error) {
+            // If it cant find the noteyID. 
+            return res.status(403).json({
+                errorCode: 403,
+                errorMessage: "[delete] noteId could not be found"
+            });
         }
-        else{
+        else {
             res.send('');
         }
     });
 }
 
-exports.login = function(req,res){
+exports.login = function (req, res) {
     User.findOne({
         userName: req.body.userName
-    }, function(err, user){
+    }, function (err, user) {
         if (err) throw err;
 
-        if(!user){
-            return res.status(404).json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
-            
-            
-        } else{
-            user.comparePassword(req.body.password, function(err, isMatch){
-                if (isMatch && !err){
+        if (!user) {
+            // If the username doesn't exist
+            return res.status(404).json({
+                errorCode: 404,
+                errorMessage: "[login] login userName does not exist"
+            });
+        } else {
+            user.comparePassword(req.body.password, function (err, isMatch) {
+                if (isMatch && !err) {
                     var createdToken = jwt.encode(user, config.secret);
-                    res.send('Bearer '+createdToken);
-                    
-                    
-                }else{
-                    return res.status(404).json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
+                    res.send('Bearer ' + createdToken);
+                } else {
+                    // If the username and password doesn't match. 
+                    return res.status(404).json({
+                        errorCode: 404,
+                        errorMessage: "[login] login userName and password mismatch"
+                    });
                 }
             })
         }
     });
 };
 
-getToken = function(headers){
-    if(headers && headers.authorization){
+getToken = function (headers) {
+    if (headers && headers.authorization) {
         var parted = headers.authorization.split(' ');
-        if (parted.length === 2){
+        if (parted.length === 2) {
             return parted[1];
         } else {
             return null;
         }
-    }else {
+    } else {
         return null;
     }
 }
 
-exports.decode = function(req,res){
-    if(!getToken(req.headers)){
-        res.status(404).json({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
+exports.decode = function (req, res) {
+    if (!getToken(req.headers)) {
+        // This one is for a possibly profile view.
+        // If you're not logged in it will spit this out. 
+        res.status(404).json({
+            errorCode: 404,
+            errorMessage: "[decode] user is not logged in"
+        });
     }
-    else{
+    else {
         var token = getToken(req.headers);
         var decoded = jwt.decode(token, config.secret);
         var userName = decoded.userName;
         var email = decoded.email;
-        res.json({userName: userName, email: email});
+        res.json({ userName: userName, email: email });
     }
 };
 
