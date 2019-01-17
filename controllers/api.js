@@ -64,7 +64,7 @@ exports.create = function (req, res) {
     create.save(function (error) {
         if (error) {
             console.log(error);
-            return res.status(2.0).json({
+            return res.status(400).json({
                 errorCode: 2.0,
                 errorMessage: "[create] not filled heading or/and content"
             });
