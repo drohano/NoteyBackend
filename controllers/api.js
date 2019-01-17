@@ -15,20 +15,20 @@ exports.register = function(req,res){
     });
     var fields = register.email.split('@');
     if (format.test(register.userName)){
-        return res.status(1.0).json({success: false, errorCode: 1.0, errorMessage: "Special characters are not allowed"});
+        return res.status(403).json({success: false, errorCode: 1.0, errorMessage: "Special characters are not allowed"});
     }
     else if(formatEmail.test(fields[1])){
-        return res.status(1.1).json({success: false, errorCode: 1.1, errorMessage: "Domain name is invalid"});
+        return res.status(403).json({success: false, errorCode: 1.1, errorMessage: "Domain name is invalid"});
     }
     else{
         register.save(function(error){
         //obs hantera error
             if (error){
                 if(error.code == 11000){
-                    return res.status(1.3).json({success: false, errorCode: 1.3, errorMessage: "User name already exists!"});
+                    return res.status(409).json({success: false, errorCode: 1.3, errorMessage: "User name already exists!"});
                 }
                 else{
-                return res.status(1.4).json({success: false, errorCode: 1.4, errorMessage: "You have to fill all fields!"}); 
+                return res.status(400).json({success: false, errorCode: 1.4, errorMessage: "You have to fill all fields!"}); 
                 }
                 
             }
@@ -97,6 +97,7 @@ exports.read = function(req,res){
     });
 };
 
+        // If it cant find the noteyID.  
 exports.note = function(req,res){
     Note.findById(req.params.id, function(error, note){
         if(error){
@@ -109,13 +110,16 @@ exports.note = function(req,res){
     });
 }
 
-
+        
 exports.update = function(req,res){
+    // This one is for updateSave.
+    // If heading or content doesnt exist it will spitt this out. 
     if(req.body.heading == null || req.body.content == null || req.body.date == null){
         return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"});
     }
     else{
         Note.findByIdAndUpdate(req.params.id, {heading: req.body.heading, content: req.body.content, date: req.body.date}, {new: true}, (error, note) =>{
+            // If it couldn't update it will spit this out.
             if (error){
                 return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
             }
@@ -131,6 +135,7 @@ exports.update = function(req,res){
 exports.delete = function(req,res){
     Note.findByIdAndRemove(req.params.id, function(error, note){
         if(error){
+            // If it cant find the noteyID. 
             return res.status(403).json({success: false, errorCode: 403, errorMessage: "This note does not exist!"});
         }
         else{
@@ -146,6 +151,8 @@ exports.login = function(req,res){
         if (err) throw err;
 
         if(!user){
+
+            // If the username dont exist
             return res.status(404).json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
             
             
@@ -157,6 +164,7 @@ exports.login = function(req,res){
                     
                     
                 }else{
+                    // If the username and password doesn't match. 
                     return res.status(404).json({success: false, errorCode: 404, errorMessage: "Username or password is not correct!"});
                 }
             })
@@ -179,6 +187,8 @@ getToken = function(headers){
 
 exports.decode = function(req,res){
     if(!getToken(req.headers)){
+        // This one is for a possibly profile view.
+        // If you're not logged in it will spit this out. 
         res.status(404).json({success: false, errorCode: 404, errorMessage: "You are not logged in!"});
     }
     else{
