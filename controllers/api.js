@@ -15,20 +15,20 @@ exports.register = function(req,res){
     });
     var fields = register.email.split('@');
     if (format.test(register.userName)){
-        return res.status(403).json({success: false, errorCode: 403, errorMessage: "Special characters are not allowed"});
+        return res.status(1.0).json({success: false, errorCode: 1.0, errorMessage: "Special characters are not allowed"});
     }
     else if(formatEmail.test(fields[1])){
-        return res.status(403).json({success: false, errorCode: 403, errorMessage: "Domain name is invalid"});
+        return res.status(1.1).json({success: false, errorCode: 1.1, errorMessage: "Domain name is invalid"});
     }
     else{
         register.save(function(error){
         //obs hantera error
             if (error){
                 if(error.code == 11000){
-                    return res.status(409).json({success: false, errorCode: 409, errorMessage: "User name already exists!"});
+                    return res.status(1.3).json({success: false, errorCode: 1.3, errorMessage: "User name already exists!"});
                 }
                 else{
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.status(1.4).json({success: false, errorCode: 1.4, errorMessage: "You have to fill all fields!"}); 
                 }
                 
             }
@@ -50,11 +50,15 @@ exports.create = function(req,res){
         
 
     });
+    
+    // This one is for create Notey function.
+    // If heading or content doesnt exist it will spitt this out.
+    // Both need to have a value.
     create.save(function(error){
         //obs hantera error
             if (error){
                 console.log(error);
-                return res.status(400).json({success: false, errorCode: 400, errorMessage: "You have to fill all fields!"}); 
+                return res.status(2.0).json({success: false, errorCode: 2.0, errorMessage: "You have to fill all fields!"}); 
                 
             }
             res.send('');
@@ -69,15 +73,18 @@ exports.read = function(req,res){
         if (err) return next(err);
         var list = [];
 
+        // This one is for reading Tokens.
         var id = decoded._id;
         if (!id){
-            return res.status(403).json({success: false, errorCode: 403, errorMessage: "No user id provided!"});
+            return res.status(403).json({success: false, errorCode: 403, errorMessage: "No token provided!"});
         }
         for(var i = 0; i<note.length; i++){
             if(note[i].id == id){
                 list.push({id: note[i]._id, heading: note[i].heading, date: note[i].date});
             }
         }
+        // this one is for list notey's function.
+        // If there is no Notey's it will spit this out.
         if((list === undefined || list.length == 0)){
             res.status(403).json({success: false, errorCode: 403, errorMessage: "No notes saved!"});
         }
