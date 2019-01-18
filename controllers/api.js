@@ -4,6 +4,26 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
 
+// HTML characters to escape 
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+};
+
+// Code from mustache.js
+// Escapes HTML characters in strings
+function escapeHtml (string) {
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return entityMap[s];
+    });
+}
+
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
@@ -53,10 +73,19 @@ exports.create = function (req, res) {
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
         id: decoded._id,
-        heading: req.body.heading,
-        content: req.body.content,
-        date: req.body.date
+        heading: escapeHtml(req.body.heading),
+        content: escapeHtml(req.body.content),
+        date: escapeHtml(req.body.date)
     });
+    // Unsure if this is the correct placement for error handling.
+    // Check if heading exceeds 50 character limit
+    if (req.body.heading.length > 50) {
+        // Unsure what status code to use.
+        return res.status(400).json({
+            errorCode: 2.1,
+            errorMessage: "[create] heading can't be more than 50 characters"
+        });
+    };
 
     // This one is for create Notey function.
     // If heading or content doesnt exist it will spitt this out.
@@ -133,8 +162,16 @@ exports.update = function (req, res) {
             errorMessage: "[update] not filled all required fields"
         });
     }
+    // Check if heading exceeds 50 character limit
+    else if (req.body.heading.length > 50) {
+        // Unsure what status code to use.
+        return res.status(400).json({
+            errorCode: 2.1,
+            errorMessage: "[update] heading can't be more than 50 characters"
+        });
+    }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date }, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: escapeHtml(req.body.heading), content: escapeHtml(req.body.content), date: escapeHtml(req.body.date) }, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
