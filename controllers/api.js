@@ -24,6 +24,10 @@ function escapeHtml (string) {
     });
 }
 
+function escapeScript (string){
+    return String(string).replace(/<script>/gi,'&ltscript&gt').replace(/<\/script>/gi,'&lt&#x2fscript&gt');
+}
+
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
@@ -73,9 +77,9 @@ exports.create = function (req, res) {
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
         id: decoded._id,
-        heading: escapeHtml(req.body.heading),
-        content: escapeHtml(req.body.content),
-        date: escapeHtml(req.body.date)
+        heading: escapeScript(req.body.heading),
+        content: escapeScript(req.body.content),
+        date: escapeScript(req.body.date)
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -171,7 +175,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: escapeHtml(req.body.heading), content: escapeHtml(req.body.content), date: escapeHtml(req.body.date) }, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: escapeScript(req.body.heading), content: escapeScript(req.body.content), date: escapeScript(req.body.date) }, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
