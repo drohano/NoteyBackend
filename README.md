@@ -355,9 +355,10 @@ function generateNote(){
 | ------------- |:-------------:| 
 | 1.0     | [register] register.userName format is mismatched |
 | 1.1     | [register] register domain format is mismatched |
-| 1.2     | [register] userName already exist in database |
+| 1.3     | [register] userName already exist in database |
 | 1.4     | [register] not filled all required fields |
 | 2.0     | [create] not filled heading or/and content |
+| 2.1     | [create] heading can't be more than 50 characters |
 | 3.0     | [read] token not found |
 | 3.1     | [read] notey notes count is 0/undefined |
 | 4.0     | [note] noteId could not be found |
