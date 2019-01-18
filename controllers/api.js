@@ -77,6 +77,15 @@ exports.create = function (req, res) {
         content: escapeHtml(req.body.content),
         date: escapeHtml(req.body.date)
     });
+    // Unsure if this is the correct placement for error handling.
+    // Check if heading exceeds 50 character limit
+    if (req.body.heading.length > 50) {
+        // Unsure what status code to use.
+        return res.status(400).json({
+            errorCode: 2.1,
+            errorMessage: "[create] heading can't be more than 50 characters"
+        });
+    };
 
     // This one is for create Notey function.
     // If heading or content doesnt exist it will spitt this out.
@@ -151,6 +160,14 @@ exports.update = function (req, res) {
         return res.status(400).json({
             errorCode: 2.0,
             errorMessage: "[update] not filled all required fields"
+        });
+    }
+    // Check if heading exceeds 50 character limit
+    else if (req.body.heading.length > 50) {
+        // Unsure what status code to use.
+        return res.status(400).json({
+            errorCode: 2.1,
+            errorMessage: "[update] heading can't be more than 50 characters"
         });
     }
     else {
