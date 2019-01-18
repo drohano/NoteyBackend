@@ -4,6 +4,26 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
 
+// HTML characters to escape 
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+};
+
+// Code from mustache.js
+// Escapes HTML characters in strings
+function escapeHtml (string) {
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+        return entityMap[s];
+    });
+}
+
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
@@ -53,9 +73,9 @@ exports.create = function (req, res) {
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
         id: decoded._id,
-        heading: req.body.heading,
-        content: req.body.content,
-        date: req.body.date
+        heading: escapeHtml(req.body.heading),
+        content: escapeHtml(req.body.content),
+        date: escapeHtml(req.body.date)
     });
 
     // This one is for create Notey function.
@@ -134,7 +154,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date }, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: escapeHtml(req.body.heading), content: escapeHtml(req.body.content), date: escapeHtml(req.body.date) }, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({

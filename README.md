@@ -353,15 +353,24 @@ function generateNote(){
 
 | name       | Meaning           |
 | ------------- |:-------------:| 
-| 400     | One or more fields of the registration field aren't filled |
-| 409     | This is an exclusive variable and is already exisiting in the database |
-| 403     | A key variable isn't provided |
+| 1.0     | [register] register.userName format is mismatched |
+| 1.1     | [register] register domain format is mismatched |
+| 1.2     | [register] userName already exist in database |
+| 1.4     | [register] not filled all required fields |
+| 2.0     | [create] not filled heading or/and content |
+| 3.0     | [read] token not found |
+| 3.1     | [read] notey notes count is 0/undefined |
+| 4.0     | [note] noteId could not be found |
+| 5.0     | [update] note content failed to update |
+| 6.0     | [login] login userName does not exist |
+| 6.1     | [login] login userName and password mismatch|
+| 7.0     | [decode] user is not logged in |
+
 
 All error messages come in a **JSON-Object** meaning there is different parts to the message:
 
 | Type       | Datatype           | Meaning           |
 | ------------- |:-------------:| ------------- | 
-| success     | bool | can be true or false |
 | messageCode     | int | error code of the error |
 | errorMessage     | String | What you can use to put as a GUI error |
 
@@ -369,9 +378,8 @@ All error messages come in a **JSON-Object** meaning there is different parts to
 
 ```
 {
-    success: false,
-    errorCode: 400,
-    errorMessage: "You have to fill all fields!"
+    errorCode: 2.0,
+    errorMessage: "not filled all required fields"
 }
 ```
 
@@ -382,7 +390,7 @@ These error messages have to be parsed with the responseText as so:
 }
 ```
 
-err.errorMessage will become **You have to fill all fields**
+err.errorMessage will become **not filled all required fields**
 
 
-## Team W.E.I
+## Team W.E.I + CUE
