@@ -120,7 +120,7 @@ exports.read = function (req, res) {
 
         for (var i = 0; i < note.length; i++) {
             if (note[i].id == id) {
-                list.push({ id: note[i]._id, heading: note[i].heading, date: note[i].date });
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date });
             }
         }
 
