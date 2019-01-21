@@ -24,6 +24,13 @@ function escapeHtml (string) {
     });
 }
 
+function escapeScript (string){
+    return String(string)
+        .replace(/<script>/gi,'&ltscript&gt')
+        .replace(/<\/script>/gi,'&lt&#x2fscript&gt')
+        .replace(/onclick=".*"/gi, "");
+}
+
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
