@@ -35,9 +35,10 @@ exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
 
+    // Create new user and make the username and email case insensitive
     var register = new User({
-        userName: req.body.userName,
-        email: req.body.email,
+        userName: req.body.userName.toLowerCase(),
+        email: req.body.email.toLowerCase(),
         password: req.body.password
     });
     var fields = register.email.split('@');
