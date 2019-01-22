@@ -5,7 +5,8 @@ var jwt = require('jwt-simple');
 var config = require('../config/database');
 
 // HTML characters to escape 
-var entityMap = {
+// we dont need it right now
+/*var entityMap = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -14,31 +15,31 @@ var entityMap = {
     '/': '&#x2F;',
     '`': '&#x60;',
     '=': '&#x3D;'
-};
+};*/
 
 // Code from mustache.js
 // Escapes HTML characters in strings
-function escapeHtml (string) {
+/*function escapeHtml (string) {
     return String(string).replace(/[&<>"'`=\/]/g, function (s) {
         return entityMap[s];
     });
 }
-
+// we dont need it right now
 function escapeScript (string){
     return String(string)
         .replace(/<script>/gi,'&ltscript&gt')
         .replace(/<\/script>/gi,'&lt&#x2fscript&gt')
         .replace(/onclick=".*"/gi, "");
-}
+}*/
 
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
 
-    // Create new user and make the username and email case insensitive
+    // Create new user and make the username case insensitive
     var register = new User({
         userName: req.body.userName.toLowerCase(),
-        email: req.body.email.toLowerCase(),
+        email: req.body.email,
         password: req.body.password
     });
     var fields = register.email.split('@');
@@ -81,9 +82,9 @@ exports.create = function (req, res) {
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
         id: decoded._id,
-        heading: escapeHtml(req.body.heading),
-        content: escapeHtml(req.body.content),
-        date: escapeHtml(req.body.date)
+        heading: req.body.heading,
+        content: req.body.content,
+        date: req.body.date
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -179,7 +180,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: escapeHtml(req.body.heading), content: escapeHtml(req.body.content), date: escapeHtml(req.body.date) }, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date }, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
@@ -211,7 +212,7 @@ exports.delete = function (req, res) {
 
 exports.login = function (req, res) {
     User.findOne({
-        userName: req.body.userName
+        userName: req.body.userName.toLowerCase()
     }, function (err, user) {
         if (err) throw err;
 
@@ -263,7 +264,7 @@ exports.decode = function (req, res) {
     else {
         var token = getToken(req.headers);
         var decoded = jwt.decode(token, config.secret);
-        var userName = decoded.userName;
+        var userName = decoded.userName.toLowerCase();
         var email = decoded.email;
         res.json({ userName: userName, email: email });
     }
