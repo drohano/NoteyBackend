@@ -178,6 +178,7 @@ exports.note = function (req, res) {
         else {
             //================================================================================
             // If sats som jämnför dates
+            
             dateTest = new Date; // dagens datum för att jämnföra med modifiedDate
             
             var timeDiff = Math.abs(dateTest.getTime() - modifiedDate.getTime());
