@@ -85,7 +85,7 @@ exports.create = function (req, res) {
         heading: req.body.heading,
         content: req.body.content,
         date: req.body.date,
-        modifiedDate: ''
+        modifiedDate: null
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -112,6 +112,15 @@ exports.create = function (req, res) {
     });
 }
 
+/*
+// trying to parse modifiedDate
+function parseDate(input) {
+    var parts = input.match(/(\d+)/g);
+    // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
+    return new Date(parts[0], parts[1]-1, parts[2]); // months are 0-based
+  }
+*/  
+
 exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
@@ -129,26 +138,35 @@ exports.read = function (req, res) {
         }
 
         for (var i = 0; i < note.length; i++) {
+
             //========================================================================================
-            // IF sats som jämnför dates
+                       
+            if (note[i].id == id) {
             
-            dateTest = new Date; // dagens datum för att jämnföra med modifiedDate
+            if (note[i].modifiedDate == null){
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date});
+            }
+
+            else{
+            // modifiedDate needs to be parsed inorder for the function to work.
+            //parseDate(note[i].modifiedDate);              
+            // compare current time with modifiedDate to get the diffrence in days.    
+
+            dateTest = new Date; // Todays date to compare with modifiedDate            
             
-            var timeDiff = Math.abs(dateTest.getTime() - modifiedDate.getTime());
+            var timeDiff = Math.abs(dateTest.getTime() - note[i].modifiedDate.getTime());
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
             if(diffDays < 1){
-                modifiedDate = "Today"
+                note[i].modifiedDate = "Today"
             }
             else{
-                modifiedDate = diffDays;
+                note[i].modifiedDate = diffDays;
 
             }
-
-            
-            //else today
-            
-            if (note[i].id == id) {
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate:note[i].modifiedDate });
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
+            }
+                        
             }
         }
 
@@ -176,21 +194,16 @@ exports.note = function (req, res) {
             });
         }
         else {
-            //================================================================================
-            // If sats som jämnför dates
-            
-            dateTest = new Date; // dagens datum för att jämnföra med modifiedDate
-            
-            var timeDiff = Math.abs(dateTest.getTime() - modifiedDate.getTime());
-            diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            if(diffDays < 1){
-                modifiedDate = "Today"
+            //===============================================================================
+            // checks if modifiedDate = null.
+            // If so bring back modifiedDate or not.
+            if( note.modifiedDate == null){
+                res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date});
             }
             else{
-                modifiedDate = diffDays;
-
+                res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
             }
-            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
+            
         }
     });
 }
