@@ -85,7 +85,7 @@ exports.create = function (req, res) {
         heading: req.body.heading,
         content: req.body.content,
         date: req.body.date,
-        modifiedDate: null
+        modifiedDate: req.body.date,
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -143,6 +143,7 @@ exports.read = function (req, res) {
                        
             if (note[i].id == id) {
             
+
             if (note[i].modifiedDate == null){
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date});
             }
@@ -151,17 +152,34 @@ exports.read = function (req, res) {
             // modifiedDate needs to be parsed inorder for the function to work.
             //parseDate(note[i].modifiedDate);              
             // compare current time with modifiedDate to get the diffrence in days.    
-
-            dateTest = new Date; // Todays date to compare with modifiedDate            
             
-            var timeDiff = Math.abs(dateTest.getTime() - note[i].modifiedDate.getTime());
+            var dateTest = new Date("2019-02-05"); // Todays date to compare with modifiedDate
+                                                   // Think it needs to be in YYYY-mm-dd format.
+            /*
+            var dd = dateTest.getDate();
+            var mm = dateTest.getMonth()+1; //January is 0!
+            var yyyy = dateTest.getFullYear();
+    
+            if(dd<10) {
+                dd = '0'+dd
+            } 
+    
+            if(mm<10) {
+                mm = '0'+mm
+            } 
+                
+            dateTest = new Date (yyyy + '/' + mm + '/' + dd);    
+            */
+            dateTest2 = new Date(note[i].modifiedDate);
+
+            var timeDiff = Math.abs(dateTest.getTime() - dateTest2.getTime());
             diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
             if(diffDays < 1){
                 note[i].modifiedDate = "Today"
             }
             else{
-                note[i].modifiedDate = diffDays;
+                note[i].modifiedDate = diffDays + " days";
 
             }
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
