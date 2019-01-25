@@ -6,7 +6,8 @@ var NoteSchema = new Schema({
     heading: {type: String, required: true, max: 100},
     content: {type: String, required: true, max: 1000},
     date: {type: String, required: true, max: 100},
-    modifiedDate: {type: String, required: true, max: 100}
+    modifiedDate: {type: String, required: true, max: 100},
+    isEdited:{type: Boolean, required: true}
     
 });
 

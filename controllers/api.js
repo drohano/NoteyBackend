@@ -87,6 +87,7 @@ exports.create = function (req, res) {
         content: req.body.content,
         date: new Date(),
         modifiedDate: req.body.date,
+        isEdited:false
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -161,27 +162,59 @@ exports.read = function (req, res) {
             var dateApp;
 
             if (elapsed < msPerMinute) {
-                note[i].modifiedDate = Math.round(elapsed/1000) + ' seconds ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/1000) + ' seconds ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/1000) + ' seconds ago';
+                }
+                   
             }
 
             else if (elapsed < msPerHour) {
-                note[i].modifiedDate = Math.round(elapsed/msPerMinute) + ' minutes ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMinute ) + ' minutes ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerMinute ) + ' minutes ago';
+                }   
             }
 
             else if (elapsed < msPerDay ) {
-                note[i].modifiedDate = Math.round(elapsed/msPerHour ) + ' hours ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerHour ) + ' hours ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerHour ) + ' hours ago';
+                }   
             }
 
             else if (elapsed < msPerMonth) {
-                note[i].modifiedDate = Math.round(elapsed/msPerDay) + ' days ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerDay ) + ' days ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerDay ) + ' days ago';
+                }   
             }
 
             else if (elapsed < msPerYear) {
-                note[i].modifiedDate = Math.round(elapsed/msPerMonth) + ' months ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMonth ) + ' months ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerMonth ) + ' months ago';
+                }  
             }
 
             else {
-                note[i].modifiedDate = Math.round(elapsed/msPerYear ) + ' years ago';   
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerYear ) + ' years ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerYear ) + ' years ago';
+                }
+                   
             }
         }
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
@@ -214,15 +247,9 @@ exports.note = function (req, res) {
             });
         }
         else {
-            //===============================================================================
-            // checks if modifiedDate = null.
-            // If so bring back modifiedDate or not.
-            if( note.modifiedDate == null){
-                res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date});
-            }
-            else{
+          
+        
                 res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
-            }
             
         }
     });
@@ -246,7 +273,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.date}, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.date, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
