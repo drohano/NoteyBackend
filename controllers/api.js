@@ -273,7 +273,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.date, isEdited: true}, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.modifiedate, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
