@@ -36,6 +36,7 @@ function escapeScript (string){
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
+    var emailVal = /@./;
 
     // Create new user and make the username case insensitive
     var register = new User({
@@ -56,6 +57,14 @@ exports.register = function (req, res) {
             errorMessage: "[register] register domain format is mismatched"
         });
     }
+
+    if(!emailVal.test(register.email)){
+        return res.status(403).json({
+            errorCode: 1.2,
+            errorMessage: "[register] register email domain is invalid"
+        });
+    }
+
     else {
         register.save(function (error) {
             //obs hantera error
