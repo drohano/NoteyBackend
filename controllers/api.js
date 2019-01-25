@@ -141,8 +141,7 @@ exports.read = function (req, res) {
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date});
             }
 
-            else{
-            // modifiedDate needs to be parsed inorder for the function to work.
+            else{           
              
             // compare current time with modifiedDate to get the diffrence in days.    
             
@@ -273,7 +272,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.modifiedate, isEdited: true}, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
