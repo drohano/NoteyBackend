@@ -8,7 +8,7 @@ router.post('/user/decode', controller.decode);
 router.post('/notes/create', controller.create);
 router.get('/notes/', controller.read);
 router.get('/notes/:id', controller.note);
-router.patch('/notes/update/:id', controller.update);
+router.put('/notes/update/:id', controller.update);
 router.delete('/notes/delete/:id', controller.delete);
 
 module.exports = router;

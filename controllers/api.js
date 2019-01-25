@@ -281,7 +281,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        /*Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date, isEdited: true}, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
@@ -292,49 +292,8 @@ exports.update = function (req, res) {
             else {
                 res.send('');
             }
-        });*/
-        Note.findByIdAndRemove(req.params.id, function (error, note) {
-            if (error) {
-                // If it cant find the noteyID. 
-                return res.status(403).json({
-                    errorCode: 5.0,
-                    errorMessage: "[update] noteId could not be found"
-                });
-            }
-            else {
-                res.send('');
-            }
         });
-
-        var token = getToken(req.headers);
-        var decoded = jwt.decode(token, config.secret);
-        var create = new Note({
-            id: decoded._id,
-            heading: req.body.heading,
-            content: req.body.content,
-            date: req.body.date,
-            modifiedDate: req.body.date,
-            isEdited: true
-        });
-
-        if (req.body.heading.length > 50) {
-            // Unsure what status code to use.
-            return res.status(400).json({
-                errorCode: 5.1,
-                errorMessage: "[update] heading can't be more than 50 characters"
-            });
-        };
-
-        create.save(function (error) {
-            if (error) {
-                console.log(error);
-                return res.status(400).json({
-                    errorCode: 5.2,
-                    errorMessage: "[update] not filled heading or/and content"
-                });
-            }
-            res.send('');
-        });
+        
     }
 }
 
