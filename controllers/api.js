@@ -3,9 +3,11 @@ var Note = require('../models/note');
 var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
+var time = require('javascript-time-ago/load-all-locales');
 
 // HTML characters to escape 
-var entityMap = {
+// we dont need it right now
+/*var entityMap = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -14,31 +16,31 @@ var entityMap = {
     '/': '&#x2F;',
     //'`': '&#x60;',
     '=': '&#x3D;'
-};
+};*/
 
 // Code from mustache.js
 // Escapes HTML characters in strings
-function escapeHtml (string) {
+/*function escapeHtml (string) {
     return String(string).replace(/[&<>"'`=\/]/g, function (s) {
         return entityMap[s];
     });
 }
-
+// we dont need it right now
 function escapeScript (string){
     return String(string)
         .replace(/<script>/gi,'&ltscript&gt')
         .replace(/<\/script>/gi,'&lt&#x2fscript&gt')
         .replace(/onclick=".*"/gi, "");
-}
+}*/
 
 exports.register = function (req, res) {
     var format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     var formatEmail = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?]/;
 
-    // Create new user and make the username and email case insensitive
+    // Create new user and make the username case insensitive
     var register = new User({
         userName: req.body.userName.toLowerCase(),
-        email: req.body.email.toLowerCase(),
+        email: req.body.email,
         password: req.body.password
     });
     var fields = register.email.split('@');
@@ -81,9 +83,11 @@ exports.create = function (req, res) {
     var decoded = jwt.decode(token, config.secret);
     var create = new Note({
         id: decoded._id,
-        heading: escapeHtml(req.body.heading),
-        content: escapeHtml(req.body.content),
-        date: escapeHtml(req.body.date)
+        heading: req.body.heading,
+        content: req.body.content,
+        date: new Date(),
+        modifiedDate: req.body.date,
+        isEdited:false
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -108,7 +112,7 @@ exports.create = function (req, res) {
         }
         res.send('');
     });
-}
+} 
 
 exports.read = function (req, res) {
     var token = getToken(req.headers);
@@ -127,10 +131,97 @@ exports.read = function (req, res) {
         }
 
         for (var i = 0; i < note.length; i++) {
+
+            //========================================================================================
+                       
             if (note[i].id == id) {
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date });
+            
+
+            if (note[i].modifiedDate == null){
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date});
+            }
+
+            else{
+            // modifiedDate needs to be parsed inorder for the function to work.
+             
+            // compare current time with modifiedDate to get the diffrence in days.    
+            
+            var dateTest = new Date(); // Todays date to compare with modifiedDate
+            console.log(dateTest); 
+
+            dateTest2 = new Date(note[i].modifiedDate);
+            var current = new Date(note[i].date);
+            var msPerMinute = 60 * 1000;
+            var msPerHour = msPerMinute * 60;
+            var msPerDay = msPerHour * 24;
+            var msPerMonth = msPerDay * 30;
+            var msPerYear = msPerDay * 365;
+
+            var elapsed = dateTest.getTime() - current.getTime();
+            
+            var dateApp;
+
+            if (elapsed < msPerMinute) {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/1000) + ' seconds ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/1000) + ' seconds ago';
+                }
+                   
+            }
+
+            else if (elapsed < msPerHour) {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMinute ) + ' minutes ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerMinute ) + ' minutes ago';
+                }   
+            }
+
+            else if (elapsed < msPerDay ) {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerHour ) + ' hours ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerHour ) + ' hours ago';
+                }   
+            }
+
+            else if (elapsed < msPerMonth) {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerDay ) + ' days ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerDay ) + ' days ago';
+                }   
+            }
+
+            else if (elapsed < msPerYear) {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMonth ) + ' months ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerMonth ) + ' months ago';
+                }  
+            }
+
+            else {
+                if(note[i].isEdited == true){
+                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerYear ) + ' years ago';
+                }
+                else{
+                    note[i].modifiedDate = Math.round(elapsed/msPerYear ) + ' years ago';
+                }
+                   
             }
         }
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
+            }
+                        
+            }
+        
 
         // This one is for list notey's function.
         // If there is no Notey's it will spit this out.
@@ -156,7 +247,10 @@ exports.note = function (req, res) {
             });
         }
         else {
-            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date });
+          
+        
+                res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
+            
         }
     });
 }
@@ -179,7 +273,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: escapeHtml(req.body.heading), content: escapeHtml(req.body.content), date: escapeHtml(req.body.date) }, { new: true }, (error, note) => {
+        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, modifiedDate: req.body.modifiedate, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
@@ -211,7 +305,7 @@ exports.delete = function (req, res) {
 
 exports.login = function (req, res) {
     User.findOne({
-        userName: req.body.userName
+        userName: req.body.userName.toLowerCase()
     }, function (err, user) {
         if (err) throw err;
 
@@ -263,7 +357,7 @@ exports.decode = function (req, res) {
     else {
         var token = getToken(req.headers);
         var decoded = jwt.decode(token, config.secret);
-        var userName = decoded.userName;
+        var userName = decoded.userName.toLowerCase();
         var email = decoded.email;
         res.json({ userName: userName, email: email });
     }
