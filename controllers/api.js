@@ -96,7 +96,7 @@ exports.create = function (req, res) {
         content: req.body.content,
         date: new Date(),
         modifiedDate: req.body.date,
-        isEdited:false
+        isEdited: false
     });
     // Unsure if this is the correct placement for error handling.
     // Check if heading exceeds 50 character limit
@@ -121,7 +121,7 @@ exports.create = function (req, res) {
         }
         res.send('');
     });
-} 
+}
 
 exports.read = function (req, res) {
     var token = getToken(req.headers);
@@ -142,94 +142,94 @@ exports.read = function (req, res) {
         for (var i = 0; i < note.length; i++) {
 
             //========================================================================================
-                       
+
             if (note[i].id == id) {
-            
 
-            if (note[i].modifiedDate == null){
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date});
+
+                if (note[i].modifiedDate == null) {
+                    list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date });
+                }
+
+                else {
+
+                    // compare current time with modifiedDate to get the diffrence in days.    
+
+                    var dateTest = new Date(); // Todays date to compare with modifiedDate
+                    console.log(dateTest);
+
+                    dateTest2 = new Date(note[i].modifiedDate);
+                    var current = new Date(note[i].date);
+                    var msPerMinute = 60 * 1000;
+                    var msPerHour = msPerMinute * 60;
+                    var msPerDay = msPerHour * 24;
+                    var msPerMonth = msPerDay * 30;
+                    var msPerYear = msPerDay * 365;
+
+                    var elapsed = dateTest.getTime() - current.getTime();
+
+                    var dateApp;
+
+                    if (elapsed < msPerMinute) {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / 1000) + ' seconds ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / 1000) + ' seconds ago';
+                        }
+
+                    }
+
+                    else if (elapsed < msPerHour) {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerMinute) + ' minutes ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / msPerMinute) + ' minutes ago';
+                        }
+                    }
+
+                    else if (elapsed < msPerDay) {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerHour) + ' hours ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / msPerHour) + ' hours ago';
+                        }
+                    }
+
+                    else if (elapsed < msPerMonth) {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerDay) + ' days ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / msPerDay) + ' days ago';
+                        }
+                    }
+
+                    else if (elapsed < msPerYear) {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerMonth) + ' months ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / msPerMonth) + ' months ago';
+                        }
+                    }
+
+                    else {
+                        if (note[i].isEdited == true) {
+                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerYear) + ' years ago';
+                        }
+                        else {
+                            note[i].modifiedDate = Math.round(elapsed / msPerYear) + ' years ago';
+                        }
+
+                    }
+                }
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
             }
 
-            else{           
-             
-            // compare current time with modifiedDate to get the diffrence in days.    
-            
-            var dateTest = new Date(); // Todays date to compare with modifiedDate
-            console.log(dateTest); 
-
-            dateTest2 = new Date(note[i].modifiedDate);
-            var current = new Date(note[i].date);
-            var msPerMinute = 60 * 1000;
-            var msPerHour = msPerMinute * 60;
-            var msPerDay = msPerHour * 24;
-            var msPerMonth = msPerDay * 30;
-            var msPerYear = msPerDay * 365;
-
-            var elapsed = dateTest.getTime() - current.getTime();
-            
-            var dateApp;
-
-            if (elapsed < msPerMinute) {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/1000) + ' seconds ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/1000) + ' seconds ago';
-                }
-                   
-            }
-
-            else if (elapsed < msPerHour) {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMinute ) + ' minutes ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/msPerMinute ) + ' minutes ago';
-                }   
-            }
-
-            else if (elapsed < msPerDay ) {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerHour ) + ' hours ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/msPerHour ) + ' hours ago';
-                }   
-            }
-
-            else if (elapsed < msPerMonth) {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerDay ) + ' days ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/msPerDay ) + ' days ago';
-                }   
-            }
-
-            else if (elapsed < msPerYear) {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerMonth ) + ' months ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/msPerMonth ) + ' months ago';
-                }  
-            }
-
-            else {
-                if(note[i].isEdited == true){
-                    note[i].modifiedDate = "edited " + Math.round(elapsed/msPerYear ) + ' years ago';
-                }
-                else{
-                    note[i].modifiedDate = Math.round(elapsed/msPerYear ) + ' years ago';
-                }
-                   
-            }
         }
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
-            }
-                        
-            }
-        
+
 
         // This one is for list notey's function.
         // If there is no Notey's it will spit this out.
@@ -255,10 +255,10 @@ exports.note = function (req, res) {
             });
         }
         else {
-          
-        
-                res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
-            
+
+
+            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
+
         }
     });
 }
@@ -281,7 +281,7 @@ exports.update = function (req, res) {
         });
     }
     else {
-        Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date, isEdited: true}, { new: true }, (error, note) => {
+        /*Note.findByIdAndUpdate(req.params.id, { heading: req.body.heading, content: req.body.content, date: req.body.date, isEdited: true}, { new: true }, (error, note) => {
             // If it couldn't update it will spit this out.
             if (error) {
                 return res.status(400).json({
@@ -292,6 +292,48 @@ exports.update = function (req, res) {
             else {
                 res.send('');
             }
+        });*/
+        Note.findByIdAndRemove(req.params.id, function (error, note) {
+            if (error) {
+                // If it cant find the noteyID. 
+                return res.status(403).json({
+                    errorCode: 5.0,
+                    errorMessage: "[update] noteId could not be found"
+                });
+            }
+            else {
+                res.send('');
+            }
+        });
+
+        var token = getToken(req.headers);
+        var decoded = jwt.decode(token, config.secret);
+        var create = new Note({
+            id: decoded._id,
+            heading: req.body.heading,
+            content: req.body.content,
+            date: req.body.date,
+            modifiedDate: req.body.date,
+            isEdited: true
+        });
+
+        if (req.body.heading.length > 50) {
+            // Unsure what status code to use.
+            return res.status(400).json({
+                errorCode: 5.1,
+                errorMessage: "[update] heading can't be more than 50 characters"
+            });
+        };
+
+        create.save(function (error) {
+            if (error) {
+                console.log(error);
+                return res.status(400).json({
+                    errorCode: 5.2,
+                    errorMessage: "[update] not filled heading or/and content"
+                });
+            }
+            res.send('');
         });
     }
 }
