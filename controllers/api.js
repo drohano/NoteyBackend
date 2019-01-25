@@ -3,6 +3,7 @@ var Note = require('../models/note');
 var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
+var time = require('javascript-time-ago/load-all-locales');
 
 // HTML characters to escape 
 // we dont need it right now
@@ -84,7 +85,7 @@ exports.create = function (req, res) {
         id: decoded._id,
         heading: req.body.heading,
         content: req.body.content,
-        date: req.body.date,
+        date: new Date(),
         modifiedDate: req.body.date,
     });
     // Unsure if this is the correct placement for error handling.
@@ -110,16 +111,7 @@ exports.create = function (req, res) {
         }
         res.send('');
     });
-}
-
-/*
-// trying to parse modifiedDate
-function parseDate(input) {
-    var parts = input.match(/(\d+)/g);
-    // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
-    return new Date(parts[0], parts[1]-1, parts[2]); // months are 0-based
-  }
-*/  
+} 
 
 exports.read = function (req, res) {
     var token = getToken(req.headers);
@@ -150,43 +142,53 @@ exports.read = function (req, res) {
 
             else{
             // modifiedDate needs to be parsed inorder for the function to work.
-            //parseDate(note[i].modifiedDate);              
+             
             // compare current time with modifiedDate to get the diffrence in days.    
             
-            var dateTest = new Date("2019-02-05"); // Todays date to compare with modifiedDate
-                                                   // Think it needs to be in YYYY-mm-dd format.
-            /*
-            var dd = dateTest.getDate();
-            var mm = dateTest.getMonth()+1; //January is 0!
-            var yyyy = dateTest.getFullYear();
-    
-            if(dd<10) {
-                dd = '0'+dd
-            } 
-    
-            if(mm<10) {
-                mm = '0'+mm
-            } 
-                
-            dateTest = new Date (yyyy + '/' + mm + '/' + dd);    
-            */
+            var dateTest = new Date(); // Todays date to compare with modifiedDate
+            console.log(dateTest); 
+
             dateTest2 = new Date(note[i].modifiedDate);
+            var current = new Date(note[i].date);
+            var msPerMinute = 60 * 1000;
+            var msPerHour = msPerMinute * 60;
+            var msPerDay = msPerHour * 24;
+            var msPerMonth = msPerDay * 30;
+            var msPerYear = msPerDay * 365;
 
-            var timeDiff = Math.abs(dateTest.getTime() - dateTest2.getTime());
-            diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var elapsed = dateTest.getTime() - current.getTime();
+            
+            var dateApp;
 
-            if(diffDays < 1){
-                note[i].modifiedDate = "Today"
+            if (elapsed < msPerMinute) {
+                note[i].modifiedDate = Math.round(elapsed/1000) + ' seconds ago';   
             }
-            else{
-                note[i].modifiedDate = diffDays + " days";
 
+            else if (elapsed < msPerHour) {
+                note[i].modifiedDate = Math.round(elapsed/msPerMinute) + ' minutes ago';   
             }
+
+            else if (elapsed < msPerDay ) {
+                note[i].modifiedDate = Math.round(elapsed/msPerHour ) + ' hours ago';   
+            }
+
+            else if (elapsed < msPerMonth) {
+                note[i].modifiedDate = Math.round(elapsed/msPerDay) + ' days ago';   
+            }
+
+            else if (elapsed < msPerYear) {
+                note[i].modifiedDate = Math.round(elapsed/msPerMonth) + ' months ago';   
+            }
+
+            else {
+                note[i].modifiedDate = Math.round(elapsed/msPerYear ) + ' years ago';   
+            }
+        }
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content , date: note[i].date , modifiedDate: note[i].modifiedDate});
             }
                         
             }
-        }
+        
 
         // This one is for list notey's function.
         // If there is no Notey's it will spit this out.
