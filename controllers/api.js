@@ -127,7 +127,7 @@ exports.create = function (req, res) {
 exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
-    Note.find({}).sort('-date').exec(function (err, note) {
+    Note.find({}).exec(function (err, note) {
         if (err) return next(err);
         var list = [];
 
@@ -241,7 +241,7 @@ exports.read = function (req, res) {
             });
         }
         else {
-            var sorted = sortBy(list, (o) => [-o.id, new Date(o.modifiedDate)]);   
+  
             res.send(sorted);
         }
     });
