@@ -225,6 +225,7 @@ exports.read = function (req, res) {
 
                     }
                 }
+                list.sort("-1");
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
             }
 
@@ -233,7 +234,7 @@ exports.read = function (req, res) {
 
         // This one is for list notey's function.
         // If there is no Notey's it will spit this out.
-        if ((list === undefined || list.length == 0)) {
+        if ((list == undefined || list.length == 0)) {
             res.status(403).json({
                 errorCode: 3.1,
                 errorMessage: "[read] notey notes count is 0/undefined"
