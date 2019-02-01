@@ -240,7 +240,6 @@ exports.read = function (req, res) {
             });
         }
         else {
-            list.sortBy((s) => -new Date(s));
             res.send(list);
         }
     });
