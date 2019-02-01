@@ -4,6 +4,7 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config/database');
 var time = require('javascript-time-ago/load-all-locales');
+var sortBy = require('array-sort-by');
 
 // HTML characters to escape 
 // we dont need it right now
@@ -240,7 +241,8 @@ exports.read = function (req, res) {
             });
         }
         else {
-            res.send(list);
+            var sorted = sortBy(list, (o) => [-o.id, new Date(o.dob)]);   
+            res.send(sorted);
         }
     });
 };
