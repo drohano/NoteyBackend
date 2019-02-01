@@ -242,6 +242,7 @@ exports.read = function (req, res) {
         }
         else {
             notes = list;
+            notes.sort("-date");
             res.send(notes);
         }
     });
