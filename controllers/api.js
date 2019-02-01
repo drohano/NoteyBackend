@@ -157,7 +157,7 @@ exports.read = function (req, res) {
                     var dateTest = new Date(); // Todays date to compare with modifiedDate
                     console.log(dateTest);
 
-                    dateTest2 = new Date(note[i].modifiedDate);
+                   
                     var current = new Date(note[i].date);
                     var msPerMinute = 60 * 1000;
                     var msPerHour = msPerMinute * 60;
@@ -171,61 +171,61 @@ exports.read = function (req, res) {
 
                     if (elapsed < msPerMinute) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / 1000) + ' seconds ago';
+                            note[i].date = "edited " + Math.round(elapsed / 1000) + ' seconds ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / 1000) + ' seconds ago';
+                            note[i].date = Math.round(elapsed / 1000) + ' seconds ago';
                         }
 
                     }
 
                     else if (elapsed < msPerHour) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerMinute) + ' minutes ago';
+                            note[i].date = "edited " + Math.round(elapsed / msPerMinute) + ' minutes ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / msPerMinute) + ' minutes ago';
+                            note[i].date = Math.round(elapsed / msPerMinute) + ' minutes ago';
                         }
                     }
 
                     else if (elapsed < msPerDay) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerHour) + ' hours ago';
+                            note[i].date = "edited " + Math.round(elapsed / msPerHour) + ' hours ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / msPerHour) + ' hours ago';
+                            note[i].date = Math.round(elapsed / msPerHour) + ' hours ago';
                         }
                     }
 
                     else if (elapsed < msPerMonth) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerDay) + ' days ago';
+                            note[i].date = "edited " + Math.round(elapsed / msPerDay) + ' days ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / msPerDay) + ' days ago';
+                            note[i].date = Math.round(elapsed / msPerDay) + ' days ago';
                         }
                     }
 
                     else if (elapsed < msPerYear) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerMonth) + ' months ago';
+                            note[i].date = "edited " + Math.round(elapsed / msPerMonth) + ' months ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / msPerMonth) + ' months ago';
+                            note[i].date = Math.round(elapsed / msPerMonth) + ' months ago';
                         }
                     }
 
                     else {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / msPerYear) + ' years ago';
+                            note[i].date = "edited " + Math.round(elapsed / msPerYear) + ' years ago';
                         }
                         else {
-                            note[i].modifiedDate = Math.round(elapsed / msPerYear) + ' years ago';
+                            note[i].date = Math.round(elapsed / msPerYear) + ' years ago';
                         }
 
                     }
                 }
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date });
             }
 
         }
@@ -257,7 +257,7 @@ exports.note = function (req, res) {
         else {
 
 
-            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date, modifiedDate: note.modifiedDate });
+            res.json({ id: note._id, heading: note.heading, content: note.content, date: note.date/*, modifiedDate: note.modifiedDate */});
 
         }
     });
