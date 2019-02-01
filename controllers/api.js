@@ -225,7 +225,6 @@ exports.read = function (req, res) {
 
                     }
                 }
-                list.sortBy((s) => -new Date(s));
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
             }
 
@@ -241,6 +240,7 @@ exports.read = function (req, res) {
             });
         }
         else {
+            list.sortBy((s) => -new Date(s));
             res.send(list);
         }
     });
