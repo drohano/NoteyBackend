@@ -171,7 +171,7 @@ exports.read = function (req, res) {
 
                     if (elapsed < msPerMinute) {
                         if (note[i].isEdited == true) {
-                            note[i].modifiedDate = "edited " + Math.round(elapsed / 1000) + ' seconds ago';
+                            note[i].modifiedDate =  Math.round(elapsed / 1000) + ' seconds ago';
                         }
                         else {
                             note[i].modifiedDate = Math.round(elapsed / 1000) + ' seconds ago';
