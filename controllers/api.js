@@ -241,7 +241,7 @@ exports.read = function (req, res) {
             });
         }
         else {
-            var sorted = sortBy(list, (o) => [-o.id, new Date(o.modifiedDate)]);   
+            var sorted = sortBy(list, (o) => [-o.id, new Date(o.date)]);   
             res.send(sorted);
         }
     });
