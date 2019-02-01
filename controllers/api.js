@@ -225,7 +225,7 @@ exports.read = function (req, res) {
 
                     }
                 }
-                
+                sortBy(list, (s) => -new Date(s));
                 list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
             }
 
