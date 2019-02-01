@@ -241,6 +241,7 @@ exports.read = function (req, res) {
             });
         }
         else {
+            list.sort();
             res.send(list);
         }
     });
