@@ -241,7 +241,8 @@ exports.read = function (req, res) {
             });
         }
         else {
-            res.send(list);
+            notes = list;
+            res.send(notes);
         }
     });
 };
