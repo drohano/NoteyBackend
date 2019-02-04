@@ -127,7 +127,7 @@ exports.create = function (req, res) {
 exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
-    Note.find(function(err, note){
+    Note.find({}).sort({date: 'descending'}).exec(function(err, docs) {
         if (err) return next(err);
         var list = [];
 
