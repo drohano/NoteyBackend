@@ -127,7 +127,7 @@ exports.create = function (req, res) {
 exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
-    Note.find(function(err, note){
+    Note.find({}).sort('-date').exec(function (err, note) {
         if (err) return next(err);
         var list = [];
 
@@ -148,7 +148,7 @@ exports.read = function (req, res) {
 
 
                 if (note[i].modifiedDate == null) {
-                    list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: new Date() });
+                    list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date });
                 }
 
                 else {
@@ -221,7 +221,7 @@ exports.read = function (req, res) {
 
                     }
                 }
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: new Date(), modifiedDate: note[i].modifiedDate });
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
             }
 
         }
@@ -236,8 +236,7 @@ exports.read = function (req, res) {
             });
         }
         else {
-            var sorted = sortBy(list, (o) => [-o.id, new Date(o.date)]);   
-            res.send(sorted);
+            res.send(list);
         }
     });
 };
