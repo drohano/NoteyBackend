@@ -127,7 +127,7 @@ exports.create = function (req, res) {
 exports.read = function (req, res) {
     var token = getToken(req.headers);
     var decoded = jwt.decode(token, config.secret);
-    Note.find({}).sort('-date').exec(function (err, note) {
+    Note.find(function(err, note){
         if (err) return next(err);
         var list = [];
 
@@ -148,7 +148,7 @@ exports.read = function (req, res) {
 
 
                 if (note[i].modifiedDate == null) {
-                    list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date });
+                    list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: new Date() });
                 }
 
                 else {
