@@ -156,9 +156,6 @@ exports.read = function (req, res) {
                     // compare current time with modifiedDate to get the diffrence in days.    
 
                     var dateTest = new Date(); // Todays date to compare with modifiedDate
-                    console.log(dateTest);
-
-                    dateTest2 = new Date(note[i].modifiedDate);
                     var current = new Date(note[i].date);
                     var msPerMinute = 60 * 1000;
                     var msPerHour = msPerMinute * 60;
@@ -167,8 +164,6 @@ exports.read = function (req, res) {
                     var msPerYear = msPerDay * 365;
 
                     var elapsed = dateTest.getTime() - current.getTime();
-
-                    var dateApp;
 
                     if (elapsed < msPerMinute) {
                         if (note[i].isEdited == true) {
@@ -226,7 +221,7 @@ exports.read = function (req, res) {
 
                     }
                 }
-                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: note[i].date, modifiedDate: note[i].modifiedDate });
+                list.push({ id: note[i]._id, heading: note[i].heading, content: note[i].content, date: new Date(), modifiedDate: note[i].modifiedDate });
             }
 
         }
@@ -241,7 +236,7 @@ exports.read = function (req, res) {
             });
         }
         else {
-            var sorted = sortBy(list, (o) => [-o.id, new Date(o.modifiedDate)]);   
+            var sorted = sortBy(list, (o) => [-o.id, new Date(o.date)]);   
             res.send(sorted);
         }
     });
